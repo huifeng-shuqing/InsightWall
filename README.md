@@ -38,28 +38,85 @@
 | ⑥ 实战 | 综合案例 | 从设计稿到完整大屏交付 |
 | ⑦ 进阶 | 性能与部署 | 渲染优化、构建发布、CI/CD |
 
-## 📁 项目结构（当前）
+## 🚀 快速开始
+
+```bash
+# 1. 克隆项目
+git clone git@github.com:huifeng-shuqing/InsightWall.git
+cd InsightWall
+
+# 2. 安装依赖
+npm install
+
+# 3. 启动开发服务器
+npm run dev
+
+# 4. 浏览器打开
+# http://localhost:5173
+```
+
+> 💡 项目默认使用 **Mock 模拟数据**，无需后端即可运行。切换方式见下方 Mock 模式说明。
+
+## 📁 项目结构
 
 ```
 InsightWall/
-├── README.md          ← 你在这里
-└── LICENSE             ← MIT 开源协议
+├── .github/workflows/ci.yml       # CI/CD
+├── .husky/                         # Git hooks
+├── docs/                           # 架构方案文档
+├── mock-server/fixtures/           # Mock 数据（仿真中文数据）
+├── public/                         # 静态资源
+├── src/
+│   ├── api/                        # API 层（适配器模式）
+│   │   ├── adapters/               # MockAdapter / HttpAdapter
+│   │   └── modules/                # dashboard / map / ranking
+│   ├── components/                 # 通用组件（无业务逻辑）
+│   │   ├── chart/                  # BaseChart / LineChart / BarChart / PieChart / MapChart
+│   │   ├── layout/                 # DashboardGrid / DashboardCard
+│   │   └── ui/                     # StatCard / PageHeader / Loading
+│   ├── features/                   # 业务模块（独立拆分）
+│   │   ├── sales-overview/         # 销售概览（KPI + 趋势）
+│   │   ├── geo-distribution/       # 地理分布（中国地图热力图）
+│   │   └── real-time-ranking/      # 实时排行（品类 + 城市）
+│   ├── hooks/                      # 全局 Hooks
+│   ├── stores/                     # Zustand 状态管理
+│   ├── services/                   # 业务服务层
+│   ├── logger/                     # 日志埋点系统
+│   ├── types/                      # TypeScript 类型定义
+│   ├── utils/                      # 工具函数
+│   ├── constants/                  # 常量（API 路径、主题色、图表默认值）
+│   └── styles/                     # 全局样式 + CSS 变量
+├── tests/                          # 测试（集成 + E2E）
+├── .env                            # 环境变量（VITE_MOCK=true）
+└── package.json
 ```
 
-> 🔨 **当前状态**：项目骨架初始化阶段。业务代码将随学习路线图逐步推送，欢迎 Watch / Star 关注更新！
+## 🛠️ 技术栈
 
-## 🛠️ 技术栈（计划采用）
+| 类别 | 技术 | 版本 |
+|------|------|------|
+| 前端框架 | React | 18.x |
+| 可视化库 | ECharts | 5.x |
+| 状态管理 | Zustand | 5.x |
+| 路由 | React Router | 6.x |
+| 构建工具 | Vite | 6.x |
+| 语言 | TypeScript | 5.x (strict) |
+| HTTP | Axios | 1.x |
+| 样式 | Tailwind CSS + CSS Modules | 4.x |
+| 测试 | Vitest + Testing Library + Playwright | 2.x / 16.x / 1.x |
+| 代码质量 | ESLint + Prettier + Husky + Commitlint | latest |
 
-为了让零基础同学也能快速上手，技术选型遵循「主流 + 易学」原则：
+## 🔄 Mock 模式
 
-| 类别 | 技术 | 选择理由 |
-|------|------|----------|
-| 前端框架 | React 18+ | 生态成熟，教程丰富 |
-| 可视化库 | ECharts 5+ | 中文友好，示例海量 |
-| 构建工具 | Vite | 快速、零配置起步 |
-| 语言 | TypeScript | 类型安全，减少低级错误 |
-| 样式 | CSS Modules + Tailwind CSS | 隔离冲突 + 原子化效率 |
-| 地图 | ECharts Map / DataV.GeoAtlas | 内置地图能力 |
+项目通过**适配器模式**实现 Mock 数据与真实 API 的无缝切换：
+
+```bash
+# .env 文件中控制
+VITE_MOCK=true    # 使用本地 Mock 数据（默认，无需后端）
+VITE_MOCK=false   # 切换到真实 HTTP 后端 API
+```
+
+切换后无需修改任何业务代码。详见 [docs/architecture-proposals.md](docs/architecture-proposals.md)。
 
 ## 📄 开源协议
 
