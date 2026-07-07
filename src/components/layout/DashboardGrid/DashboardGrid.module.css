@@ -1,0 +1,11 @@
+.grid {
+  display: grid;
+  padding: 12px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.item {
+  min-height: 0;
+  overflow: hidden;
+}

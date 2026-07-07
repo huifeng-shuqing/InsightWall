@@ -1,2 +1,16 @@
-// 地理数据获取 Hook
-// TODO: Step 10 实现
+import { useDashboardStore } from '@/stores/dashboard.store';
+import { useEffect } from 'react';
+
+export function useGeoData() {
+  const { data, loading, fetchDashboard } = useDashboardStore();
+
+  useEffect(() => {
+    if (!data) fetchDashboard();
+  }, [data, fetchDashboard]);
+
+  return {
+    geoData: data?.geoData ?? [],
+    cityRanking: data?.cityRanking ?? [],
+    loading,
+  };
+}

@@ -1,0 +1,32 @@
+.card {
+  background: rgba(26, 31, 58, 0.85);
+  border: 1px solid rgba(0, 212, 255, 0.12);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.card:hover { border-color: rgba(0, 212, 255, 0.3); }
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #e8eaed;
+  flex: 1;
+}
+
+.extra { display: flex; align-items: center; gap: 8px; }
+
+.body { flex: 1; overflow: hidden; padding: 12px 20px 16px; }

@@ -1,0 +1,14 @@
+:root {
+  --color-bg: #0a0e27;
+  --color-card-bg: rgba(26, 31, 58, 0.85);
+  --color-card-border: rgba(0, 212, 255, 0.15);
+  --color-accent: #00d4ff;
+  --color-success: #00ff88;
+  --color-warning: #ffa502;
+  --color-danger: #ff4757;
+  --color-text: #e8eaed;
+  --color-text-secondary: #8892b0;
+  --radius-card: 12px;
+  --font-tech: 'Orbitron', monospace;
+  --font-body: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+}
