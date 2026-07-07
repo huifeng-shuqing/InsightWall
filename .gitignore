@@ -8,13 +8,12 @@ dist/
 build/
 out/
 
-# Environment
-.env
+# Environment (keep .env for learning project — only VITE_MOCK flag)
 .env.local
 .env.*.local
+.env.production
 
-# IDE
-.vscode/
+# IDE (keep .vscode/settings.json for shared config)
 .idea/
 *.swp
 *.swo
@@ -33,3 +32,6 @@ yarn-error.log*
 # Cache
 .cache/
 *.tsbuildinfo
+
+# Coverage
+coverage/
