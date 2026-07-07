@@ -1,39 +1,55 @@
-import { useRef, useEffect, useCallback } from 'react';
-import * as echarts from 'echarts';
-import type { EChartsOption } from 'echarts';
+import { useRef, useEffect, useState } from 'react';
 import type { BaseChartProps } from '@/types/chart';
-import { logger } from '@/logger';
 
-export default function BaseChart({ option, height = '100%', className = '', loading = false, onChartReady }: BaseChartProps) {
+export default function BaseChart({ option, height = '100%', className = '', loading = false }: BaseChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const chartRef = useRef<echarts.ECharts | null>(null);
-
-  const initChart = useCallback(() => {
-    if (!containerRef.current) return;
-    const chart = echarts.init(containerRef.current);
-    chart.setOption(option);
-    chartRef.current = chart;
-    onChartReady?.(chart);
-    logger.perf('chart-init', 0);
-  }, [option, onChartReady]);
+  const chartRef = useRef<{ setOption: (o: unknown) => void; dispose: () => void; showLoading: () => void; hideLoading: () => void; resize: () => void } | null>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (!chartRef.current) { initChart(); return; }
-    chartRef.current.setOption(option, { notMerge: true });
-  }, [option, initChart]);
+    if (!containerRef.current || error) return;
 
-  useEffect(() => {
-    const handleResize = () => chartRef.current?.resize();
-    window.addEventListener('resize', handleResize);
+    let cancelled = false;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let chart: any = null;
+
+    import('echarts')
+      .then((echarts) => {
+        if (cancelled || !containerRef.current) return;
+        chart = echarts.init(containerRef.current);
+        chart.setOption(option);
+        chartRef.current = chart;
+      })
+      .catch(() => {
+        if (!cancelled) setError(true);
+      });
+
     return () => {
-      window.removeEventListener('resize', handleResize);
-      chartRef.current?.dispose();
+      cancelled = true;
+      if (chart) {
+        try { chart.dispose(); } catch { /* ignore */ }
+      }
     };
+  }, [option, error]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      try { chartRef.current?.resize(); } catch { /* ignore */ }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
-    loading ? chartRef.current?.showLoading() : chartRef.current?.hideLoading();
+    try {
+      if (loading) chartRef.current?.showLoading();
+      else chartRef.current?.hideLoading();
+    } catch { /* ignore */ }
   }, [loading]);
+
+  if (error) {
+    return <div className={className} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height, color: '#8892b0', fontSize: 13 }}>图表加载失败</div>;
+  }
 
   return <div ref={containerRef} className={className} style={{ height, width: '100%' }} />;
 }
