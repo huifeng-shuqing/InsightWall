@@ -1,0 +1,40 @@
+{
+  "kpis": [
+    { "id": "total-sales", "title": "总销售额", "value": 128567890, "unit": "元", "trend": 12.5, "trendDirection": "up", "icon": "sales" },
+    { "id": "total-orders", "title": "总订单量", "value": 365420, "unit": "单", "trend": 8.3, "trendDirection": "up", "icon": "orders" },
+    { "id": "avg-order", "title": "客单价", "value": 352, "unit": "元", "trend": -2.1, "trendDirection": "down", "icon": "customer" },
+    { "id": "conversion", "title": "转化率", "value": 8.2, "unit": "%", "trend": 1.8, "trendDirection": "up", "icon": "conversion" }
+  ],
+  "salesTrend": [
+    { "date": "2026-06-08", "sales": 3850000, "orders": 11820 },
+    { "date": "2026-06-09", "sales": 4120000, "orders": 12150 },
+    { "date": "2026-06-10", "sales": 3980000, "orders": 11980 },
+    { "date": "2026-06-11", "sales": 4260000, "orders": 13100 },
+    { "date": "2026-06-12", "sales": 4550000, "orders": 13750 },
+    { "date": "2026-06-13", "sales": 4680000, "orders": 14230 },
+    { "date": "2026-06-14", "sales": 4410000, "orders": 13410 },
+    { "date": "2026-06-15", "sales": 4230000, "orders": 12850 },
+    { "date": "2026-06-16", "sales": 4390000, "orders": 13290 },
+    { "date": "2026-06-17", "sales": 4580000, "orders": 13980 },
+    { "date": "2026-06-18", "sales": 4820000, "orders": 14820 },
+    { "date": "2026-06-19", "sales": 4750000, "orders": 14450 },
+    { "date": "2026-06-20", "sales": 4960000, "orders": 15140 },
+    { "date": "2026-06-21", "sales": 4890000, "orders": 14920 },
+    { "date": "2026-06-22", "sales": 4580000, "orders": 13750 },
+    { "date": "2026-06-23", "sales": 4430000, "orders": 13410 },
+    { "date": "2026-06-24", "sales": 4670000, "orders": 14200 },
+    { "date": "2026-06-25", "sales": 4910000, "orders": 14990 },
+    { "date": "2026-06-26", "sales": 5020000, "orders": 15310 },
+    { "date": "2026-06-27", "sales": 5140000, "orders": 15680 },
+    { "date": "2026-06-28", "sales": 4980000, "orders": 15170 },
+    { "date": "2026-06-29", "sales": 4680000, "orders": 14300 },
+    { "date": "2026-06-30", "sales": 4460000, "orders": 13600 },
+    { "date": "2026-07-01", "sales": 4720000, "orders": 14410 },
+    { "date": "2026-07-02", "sales": 4950000, "orders": 15120 },
+    { "date": "2026-07-03", "sales": 5080000, "orders": 15510 },
+    { "date": "2026-07-04", "sales": 5210000, "orders": 15920 },
+    { "date": "2026-07-05", "sales": 5090000, "orders": 15540 },
+    { "date": "2026-07-06", "sales": 4930000, "orders": 15030 },
+    { "date": "2026-07-07", "sales": 5180000, "orders": 15810 }
+  ]
+}

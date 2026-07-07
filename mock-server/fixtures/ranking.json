@@ -1,0 +1,24 @@
+{
+  "categoryRanking": [
+    { "rank": 1, "name": "电子产品", "value": 38250000, "percentage": 0.298, "trend": "up", "change": 0 },
+    { "rank": 2, "name": "服装鞋帽", "value": 26830000, "percentage": 0.209, "trend": "up", "change": 1 },
+    { "rank": 3, "name": "食品饮料", "value": 19870000, "percentage": 0.155, "trend": "down", "change": -1 },
+    { "rank": 4, "name": "家居用品", "value": 14560000, "percentage": 0.113, "trend": "up", "change": 1 },
+    { "rank": 5, "name": "美妆护肤", "value": 10280000, "percentage": 0.080, "trend": "up", "change": 2 },
+    { "rank": 6, "name": "运动户外", "value": 8450000, "percentage": 0.066, "trend": "down", "change": -2 },
+    { "rank": 7, "name": "图书文娱", "value": 5620000, "percentage": 0.044, "trend": "flat", "change": 0 },
+    { "rank": 8, "name": "母婴用品", "value": 4510000, "percentage": 0.035, "trend": "up", "change": 1 }
+  ],
+  "cityRanking": [
+    { "rank": 1, "name": "北京市", "value": 18560000, "percentage": 0.144, "trend": "up", "change": 0 },
+    { "rank": 2, "name": "上海市", "value": 17240000, "percentage": 0.134, "trend": "up", "change": 1 },
+    { "rank": 3, "name": "深圳市", "value": 15890000, "percentage": 0.124, "trend": "down", "change": -1 },
+    { "rank": 4, "name": "广州市", "value": 14630000, "percentage": 0.114, "trend": "up", "change": 0 },
+    { "rank": 5, "name": "杭州市", "value": 13210000, "percentage": 0.103, "trend": "up", "change": 2 },
+    { "rank": 6, "name": "成都市", "value": 11850000, "percentage": 0.092, "trend": "down", "change": -1 },
+    { "rank": 7, "name": "南京市", "value": 10520000, "percentage": 0.082, "trend": "up", "change": 1 },
+    { "rank": 8, "name": "武汉市", "value": 9680000, "percentage": 0.075, "trend": "down", "change": -2 },
+    { "rank": 9, "name": "苏州市", "value": 8740000, "percentage": 0.068, "trend": "up", "change": 1 },
+    { "rank": 10, "name": "重庆市", "value": 7820000, "percentage": 0.061, "trend": "flat", "change": 0 }
+  ]
+}
