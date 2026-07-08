@@ -212,7 +212,7 @@ export default function MainLayout() {
           <div style={{ ...panelStyle, flexShrink: 0, height: 48, overflow: 'hidden', flexDirection: 'row', alignItems: 'center', padding: '0 14px' }}>
             <span style={{ color: '#00d4ff', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0, marginRight: 12 }}>📡 实时动态</span>
             <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
-              <div style={{ display: 'flex', gap: 40, animation: 'scrollLog 35s linear infinite', whiteSpace: 'nowrap' }}>
+              <div className="activity-track" style={{ display: 'flex', gap: 40, animation: 'scrollLog 35s linear infinite', whiteSpace: 'nowrap' }}>
                 {[...activityLog, ...activityLog].map((item, i) => (
                   <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, flexShrink: 0 }}>
                     <span style={{ color: item.type === 'error' ? '#ff4757' : item.type === 'warning' ? '#ffa502' : item.type === 'success' ? '#00ff88' : '#8892b0', fontWeight: 600 }}>{item.time}</span>
@@ -229,6 +229,8 @@ export default function MainLayout() {
       <style>{`
         @keyframes fadeInUp { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:translateY(0) } }
         @keyframes scrollLog { 0% { transform:translateX(0) } 100% { transform:translateX(-50%) } }
+        .activity-track:hover { animation-play-state: paused !important }
+        .activity-track { cursor: default }
       `}</style>
     </div>
   );
