@@ -79,8 +79,53 @@ function buildRadarOption(radar: Array<{ name: string; value: number }>) {
 function buildTopoOption(nodes: Array<{ name: string; category: number; symbolSize: number }>, links: Array<{ source: string; target: string }>) {
   return {
     backgroundColor: 'transparent', tooltip: {},
-    series: [{ type: 'graph' as const, layout: 'force' as const, roam: true, force: { repulsion: 250, edgeLength: [100, 200], gravity: 0.1 }, data: nodes.map((n) => ({ ...n, itemStyle: { color: n.category === 0 ? '#ffa502' : '#00d4ff', shadowBlur: n.category === 0 ? 20 : 10, shadowColor: n.category === 0 ? 'rgba(255,165,2,0.6)' : 'rgba(0,212,255,0.4)' } })), links: links.map((l) => ({ ...l, lineStyle: { color: 'rgba(0,212,255,0.3)', curveness: 0.1 } })), label: { show: true, color: '#e0e6ed', fontSize: 9, position: 'bottom' as const }, emphasis: { focus: 'adjacency' as const, lineStyle: { width: 3 } } }],
+    series: [{ type: 'graph' as const, layout: 'none' as const, roam: true, data: nodes.map((n) => ({ ...n, itemStyle: { color: n.category === 0 ? '#ffa502' : '#00d4ff', shadowBlur: n.category === 0 ? 20 : 10, shadowColor: n.category === 0 ? 'rgba(255,165,2,0.6)' : 'rgba(0,212,255,0.4)' } })), links: links.map((l) => ({ ...l, lineStyle: { color: 'rgba(0,212,255,0.3)', curveness: 0.1 } })), label: { show: true, color: '#e0e6ed', fontSize: 9, position: 'bottom' as const }, emphasis: { focus: 'adjacency' as const, lineStyle: { width: 3 } } }],
   };
+}
+
+/* ========== 动态日志面板 — 滚一次即停 ========== */
+function LogPanel({ items }: { items: Array<{ time: string; type: string; content: string }> }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (items.length === 0) return;
+    const el = ref.current;
+    if (!el) return;
+    const onEnd = () => setDone(true);
+    el.addEventListener('animationend', onEnd, { once: true });
+    return () => el.removeEventListener('animationend', onEnd);
+  }, [items]);
+
+  const doubled = [...items, ...items];
+  const logPanelStyle: React.CSSProperties = {
+    background: 'rgba(10,16,40,0.9)', border: '1px solid rgba(0,212,255,0.15)',
+    borderRadius: 8, flexShrink: 0, height: 48, overflow: 'hidden',
+    display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '0 14px',
+  };
+  return (
+    <div style={logPanelStyle}>
+      <span style={{ color: '#00d4ff', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0, marginRight: 12 }}>📡 实时动态</span>
+      <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+        <div
+          ref={ref}
+          className={done ? 'log-done' : 'log-anim'}
+          style={{
+            display: 'flex', gap: 40, whiteSpace: 'nowrap',
+            ...(done ? { transform: 'none' } : {}),
+          }}
+        >
+          {doubled.map((item, i) => (
+            <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, flexShrink: 0 }}>
+              <span style={{ color: item.type === 'error' ? '#ff4757' : item.type === 'warning' ? '#ffa502' : item.type === 'success' ? '#00ff88' : '#8892b0', fontWeight: 600 }}>{item.time}</span>
+              <span style={{ width: 3, height: 3, borderRadius: '50%', background: item.type === 'error' ? '#ff4757' : item.type === 'warning' ? '#ffa502' : item.type === 'success' ? '#00ff88' : '#00d4ff' }} />
+              <span style={{ color: '#c0c8d8' }}>{item.content}</span>
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 /* ========== 主组件 ========== */
@@ -208,29 +253,16 @@ export default function MainLayout() {
             </div>
           </div>
 
-          {/* Bottom: Activity Log */}
-          <div style={{ ...panelStyle, flexShrink: 0, height: 48, overflow: 'hidden', flexDirection: 'row', alignItems: 'center', padding: '0 14px' }}>
-            <span style={{ color: '#00d4ff', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0, marginRight: 12 }}>📡 实时动态</span>
-            <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
-              <div className="activity-track" style={{ display: 'flex', gap: 40, animation: 'scrollLog 35s linear infinite', whiteSpace: 'nowrap' }}>
-                {[...activityLog, ...activityLog].map((item, i) => (
-                  <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, flexShrink: 0 }}>
-                    <span style={{ color: item.type === 'error' ? '#ff4757' : item.type === 'warning' ? '#ffa502' : item.type === 'success' ? '#00ff88' : '#8892b0', fontWeight: 600 }}>{item.time}</span>
-                    <span style={{ width: 3, height: 3, borderRadius: '50%', background: item.type === 'error' ? '#ff4757' : item.type === 'warning' ? '#ffa502' : item.type === 'success' ? '#00ff88' : '#00d4ff' }} />
-                    <span style={{ color: '#c0c8d8' }}>{item.content}</span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
+          {/* Bottom: Activity Log — scrolls once then stops */}
+          <LogPanel items={activityLog} />
         </div>
       </div>
 
       <style>{`
         @keyframes fadeInUp { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:translateY(0) } }
-        @keyframes scrollLog { 0% { transform:translateX(0) } 100% { transform:translateX(-50%) } }
-        .activity-track:hover { animation-play-state: paused !important }
-        .activity-track { cursor: default }
+        @keyframes scrollOnce { 0% { transform:translateX(0) } 100% { transform:translateX(-50%) } }
+        .log-anim { animation: scrollOnce 20s linear forwards }
+        .log-done { transform: none }
       `}</style>
     </div>
   );
