@@ -83,51 +83,6 @@ function buildTopoOption(nodes: Array<{ name: string; category: number; symbolSi
   };
 }
 
-/* ========== 动态日志面板 — 滚一次即停 ========== */
-function LogPanel({ items }: { items: Array<{ time: string; type: string; content: string }> }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    if (items.length === 0) return;
-    const el = ref.current;
-    if (!el) return;
-    const onEnd = () => setDone(true);
-    el.addEventListener('animationend', onEnd, { once: true });
-    return () => el.removeEventListener('animationend', onEnd);
-  }, [items]);
-
-  const doubled = [...items, ...items];
-  const logPanelStyle: React.CSSProperties = {
-    background: 'rgba(10,16,40,0.9)', border: '1px solid rgba(0,212,255,0.15)',
-    borderRadius: 8, flexShrink: 0, height: 48, overflow: 'hidden',
-    display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '0 14px',
-  };
-  return (
-    <div style={logPanelStyle}>
-      <span style={{ color: '#00d4ff', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0, marginRight: 12 }}>📡 实时动态</span>
-      <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
-        <div
-          ref={ref}
-          className={done ? 'log-done' : 'log-anim'}
-          style={{
-            display: 'flex', gap: 40, whiteSpace: 'nowrap',
-            ...(done ? { transform: 'none' } : {}),
-          }}
-        >
-          {doubled.map((item, i) => (
-            <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, flexShrink: 0 }}>
-              <span style={{ color: item.type === 'error' ? '#ff4757' : item.type === 'warning' ? '#ffa502' : item.type === 'success' ? '#00ff88' : '#8892b0', fontWeight: 600 }}>{item.time}</span>
-              <span style={{ width: 3, height: 3, borderRadius: '50%', background: item.type === 'error' ? '#ff4757' : item.type === 'warning' ? '#ffa502' : item.type === 'success' ? '#00ff88' : '#00d4ff' }} />
-              <span style={{ color: '#c0c8d8' }}>{item.content}</span>
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ========== 主组件 ========== */
 export default function MainLayout() {
   const { data, loading, fetchDashboard } = useDashboardStore();
@@ -205,8 +160,8 @@ export default function MainLayout() {
         <div style={{ display: hasData ? 'flex' : 'none', flexDirection: 'column', flex: 1, gap: 10 }}>
           {/* Row 1: KPIs */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, flexShrink: 0 }}>
-            {kpis.map((kpi, i) => (
-              <div key={kpi.id} style={{ ...kpiCard, animation: `fadeInUp 0.5s ease-out ${i * 0.1}s both` }}>
+            {kpis.map((kpi) => (
+              <div key={kpi.id} style={kpiCard}>
                 <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: 80, height: 80, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,212,255,0.1) 0%, transparent 70%)' }} />
                 <div style={{ position: 'relative', zIndex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
@@ -254,16 +209,21 @@ export default function MainLayout() {
           </div>
 
           {/* Bottom: Activity Log — scrolls once then stops */}
-          <LogPanel items={activityLog} />
+          <div style={{ ...panelStyle, flexShrink: 0, height: 48, overflow: 'hidden', flexDirection: 'row', alignItems: 'center', padding: '0 14px' }}>
+            <span style={{ color: '#00d4ff', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0, marginRight: 12 }}>📡 实时动态</span>
+            <div style={{ flex: 1, display: 'flex', gap: 30, overflow: 'hidden' }}>
+              {activityLog.map((item, i) => (
+                <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, flexShrink: 0 }}>
+                  <span style={{ color: item.type === 'error' ? '#ff4757' : item.type === 'warning' ? '#ffa502' : item.type === 'success' ? '#00ff88' : '#8892b0', fontWeight: 600 }}>{item.time}</span>
+                  <span style={{ width: 3, height: 3, borderRadius: '50%', background: item.type === 'error' ? '#ff4757' : item.type === 'warning' ? '#ffa502' : item.type === 'success' ? '#00ff88' : '#00d4ff' }} />
+                  <span style={{ color: '#c0c8d8' }}>{item.content}</span>
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      <style>{`
-        @keyframes fadeInUp { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:translateY(0) } }
-        @keyframes scrollOnce { 0% { transform:translateX(0) } 100% { transform:translateX(-50%) } }
-        .log-anim { animation: scrollOnce 20s linear forwards }
-        .log-done { transform: none }
-      `}</style>
     </div>
   );
 }
