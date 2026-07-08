@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useDashboardStore } from '@/stores/dashboard.store';
 import { formatCurrency } from '@/utils/format';
 
@@ -29,7 +29,7 @@ function ChartPanel({ option, style }: { option: Record<string, unknown>; style?
 /* ========== Option 构建函数 ========== */
 function buildLineOption(trend: Array<{ date: string; sales: number; orders: number }>) {
   return {
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent', animation: false,
     grid: { top: 20, right: 40, bottom: 25, left: 55 },
     tooltip: { trigger: 'axis' as const },
     legend: { data: ['销售额', '订单数'], textStyle: { color: '#8892b0', fontSize: 10 }, top: 0, right: 0 },
@@ -49,7 +49,7 @@ function buildBarOption(ranking: Array<{ name: string; value: number }>) {
   const names = [...ranking].reverse().map((d) => d.name);
   const values = [...ranking].reverse().map((d) => d.value);
   return {
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent', animation: false,
     grid: { top: 5, right: 50, bottom: 10, left: 70 },
     tooltip: { trigger: 'axis' as const },
     xAxis: { type: 'value' as const, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.04)' } }, axisLabel: { color: '#8892b0', fontSize: 9 } },
@@ -61,7 +61,7 @@ function buildBarOption(ranking: Array<{ name: string; value: number }>) {
 function buildPieOption(dist: Array<{ name: string; value: number }>) {
   const colors = ['#00d4ff', '#00ff88', '#ffa502', '#ff4757'];
   return {
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent', animation: false,
     tooltip: { trigger: 'item' as const },
     legend: { orient: 'vertical' as const, right: 5, top: 'center', textStyle: { color: '#8892b0', fontSize: 10 }, itemWidth: 8, itemHeight: 8 },
     series: [{ type: 'pie' as const, radius: ['55%', '75%'], center: ['40%', '50%'], data: dist.map((d, i) => ({ ...d, itemStyle: { color: colors[i] } })), label: { show: false }, emphasis: { label: { show: true, fontSize: 14, fontWeight: 'bold' as const }, scaleSize: 8 } }],
@@ -70,7 +70,7 @@ function buildPieOption(dist: Array<{ name: string; value: number }>) {
 
 function buildRadarOption(radar: Array<{ name: string; value: number }>) {
   return {
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent', animation: false,
     radar: { center: ['50%', '55%'], radius: '65%', indicator: radar.map((d) => ({ name: d.name, max: 100 })), axisName: { color: '#8892b0', fontSize: 9 }, splitArea: { areaStyle: { color: ['rgba(0,212,255,0.02)', 'rgba(0,212,255,0.04)'] } }, splitLine: { lineStyle: { color: 'rgba(0,212,255,0.15)' } }, axisLine: { lineStyle: { color: 'rgba(0,212,255,0.15)' } } },
     series: [{ type: 'radar' as const, data: [{ value: radar.map((d) => d.value), name: '运营能力' }], symbol: 'circle', symbolSize: 4, lineStyle: { color: '#00d4ff', width: 2 }, areaStyle: { color: 'rgba(0,212,255,0.15)' }, itemStyle: { color: '#00d4ff' } }],
   };
@@ -78,7 +78,7 @@ function buildRadarOption(radar: Array<{ name: string; value: number }>) {
 
 function buildTopoOption(nodes: Array<{ name: string; category: number; symbolSize: number }>, links: Array<{ source: string; target: string }>) {
   return {
-    backgroundColor: 'transparent', tooltip: {},
+    backgroundColor: 'transparent', animation: false, tooltip: {},
     series: [{ type: 'graph' as const, layout: 'none' as const, roam: true, data: nodes.map((n) => ({ ...n, itemStyle: { color: n.category === 0 ? '#ffa502' : '#00d4ff', shadowBlur: n.category === 0 ? 20 : 10, shadowColor: n.category === 0 ? 'rgba(255,165,2,0.6)' : 'rgba(0,212,255,0.4)' } })), links: links.map((l) => ({ ...l, lineStyle: { color: 'rgba(0,212,255,0.3)', curveness: 0.1 } })), label: { show: true, color: '#e0e6ed', fontSize: 9, position: 'bottom' as const }, emphasis: { focus: 'adjacency' as const, lineStyle: { width: 3 } } }],
   };
 }
@@ -104,6 +104,13 @@ export default function MainLayout() {
   const topoLinks = data?.topologyLinks ?? [];
   const activityLog = data?.activityLog ?? [];
   const hasData = !!data;
+
+  // Memoize all chart options so they don't change identity on every render
+  const lineOpt = useMemo(() => buildLineOption(salesTrend), [salesTrend]);
+  const barOpt = useMemo(() => buildBarOption(cityRanking), [cityRanking]);
+  const pieOpt = useMemo(() => buildPieOption(categoryDistribution), [categoryDistribution]);
+  const radarOpt = useMemo(() => buildRadarOption(radarD), [radarD]);
+  const topoOpt = useMemo(() => buildTopoOption(topoNodes, topoLinks), [topoNodes, topoLinks]);
 
   const pageStyle: React.CSSProperties = {
     width: '100vw', height: '100vh', overflow: 'hidden',
@@ -184,15 +191,15 @@ export default function MainLayout() {
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.5fr 1fr', gap: 12, flex: 3, minHeight: 0 }}>
             <div style={panelStyle}>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#00d4ff', marginBottom: 6 }}>📈 实时销售趋势 Trend</div>
-              <div style={{ flex: 1, minHeight: 0 }}>{hasData && <ChartPanel option={buildLineOption(salesTrend)} />}</div>
+              <div style={{ flex: 1, minHeight: 0 }}>{hasData && <ChartPanel option={lineOpt} />}</div>
             </div>
             <div style={panelStyle}>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#00d4ff', marginBottom: 6 }}>🌐 仓储网络拓扑 Overview</div>
-              <div style={{ flex: 1, minHeight: 0 }}>{hasData && <ChartPanel option={buildTopoOption(topoNodes, topoLinks)} />}</div>
+              <div style={{ flex: 1, minHeight: 0 }}>{hasData && <ChartPanel option={topoOpt} />}</div>
             </div>
             <div style={panelStyle}>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#00d4ff', marginBottom: 6 }}>🏙️ 城市销售额排名 Ranking</div>
-              <div style={{ flex: 1, minHeight: 0 }}>{hasData && <ChartPanel option={buildBarOption(cityRanking)} />}</div>
+              <div style={{ flex: 1, minHeight: 0 }}>{hasData && <ChartPanel option={barOpt} />}</div>
             </div>
           </div>
 
@@ -200,11 +207,11 @@ export default function MainLayout() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, flex: 2, minHeight: 0 }}>
             <div style={panelStyle}>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#00d4ff', marginBottom: 6 }}>🍩 品类销售占比 Distribution</div>
-              <div style={{ flex: 1, minHeight: 0 }}>{hasData && <ChartPanel option={buildPieOption(categoryDistribution)} />}</div>
+              <div style={{ flex: 1, minHeight: 0 }}>{hasData && <ChartPanel option={pieOpt} />}</div>
             </div>
             <div style={panelStyle}>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#00d4ff', marginBottom: 6 }}>🎯 运营能力雷达 Ability</div>
-              <div style={{ flex: 1, minHeight: 0 }}>{hasData && <ChartPanel option={buildRadarOption(radarD)} />}</div>
+              <div style={{ flex: 1, minHeight: 0 }}>{hasData && <ChartPanel option={radarOpt} />}</div>
             </div>
           </div>
 
