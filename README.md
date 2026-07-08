@@ -10,6 +10,10 @@
   <em>从 0 到 1，构建你的第一个数据可视化大屏 🚀</em>
 </p>
 
+<p align="center">
+  <img src="1.png" alt="InsightWall 大屏截图" width="100%" />
+</p>
+
 ---
 
 ## 📖 项目定位
