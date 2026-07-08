@@ -231,17 +231,6 @@ export default function MainLayout() {
     return () => clearInterval(t);
   }, []);
 
-  if (loading && !data) {
-    return (
-      <div style={{ ...pageStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: '#8892b0' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>⏳</div>
-          <div>数据加载中...</div>
-        </div>
-      </div>
-    );
-  }
-
   const kpis = data?.kpis ?? [];
   const salesTrend = data?.salesTrend ?? [];
   const cityRanking = data?.cityRanking ?? [];
@@ -256,6 +245,17 @@ export default function MainLayout() {
   const pieOption = useCallback(() => buildPieOption(categoryDistribution), [categoryDistribution]);
   const radarOption = useCallback(() => buildRadarOption(radarData), [radarData]);
   const topoOption = useCallback(() => buildTopoOption(topologyNodes, topologyLinks), [topologyNodes, topologyLinks]);
+
+  if (loading && !data) {
+    return (
+      <div style={{ ...pageStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: '#8892b0' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>⏳</div>
+          <div>数据加载中...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={pageStyle}>
